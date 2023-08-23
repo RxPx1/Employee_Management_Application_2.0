@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.EmployeeManagementApplication20"
+        tools:targetApi="31">
+        <activity
+            android:name=".UI.ReportPayPeriod"
+            android:label="Report Pay Period"
+            android:parentActivityName=".UI.AdminPage" />
+
+        <activity
+            android:name=".UI.UserPage"
+            android:exported="false"
+            android:label="User Page"
+            android:parentActivityName=".UI.LoginPage" />
+        <activity
+            android:name=".UI.SingleEmployeeHours"
+            android:exported="false"
+            android:label="Hours"
+            android:parentActivityName=".UI.LoginPage" />
+        <activity
+            android:name=".UI.LoginPage"
+            android:exported="false"
+            android:label="Login"
+            android:parentActivityName=".UI.MainActivity" />
+        <activity
+            android:name=".UI.ChangeAdminLogin"
+            android:exported="false"
+            android:label="Update Admin"
+            android:parentActivityName=".UI.AdminPage" />
+        <activity
+            android:name=".UI.AllEmployeeHours"
+            android:exported="false"
+            android:label="All Employee Hours"
+            android:parentActivityName=".UI.AdminPage" />
+        <activity
+            android:name=".UI.AdminPage"
+            android:exported="false"
+            android:label="Admin Page"
+            android:parentActivityName=".UI.LoginPage" />
+        <activity
+            android:name=".UI.AddNewUser"
+            android:exported="false"
+            android:label="Add a New User"
+            android:parentActivityName=".UI.AdminPage" />
+        <activity
+            android:name=".UI.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
