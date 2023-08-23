@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 
@@ -32,26 +33,22 @@ public class AdminPage extends AppCompatActivity {
 
         repository = new Repository(getApplication());
 
-        // Find the views
         employeeHoursSpinner = findViewById(R.id.hours_spinner);
         deleteUserSpinner = findViewById(R.id.delete_user_spinner);
         deleteUserButton = findViewById(R.id.button6);
 
-        // Set up the delete functionality
-        deleteUserButton.setOnClickListener(v -> deleteUser());
+        deleteUserButton.setOnClickListener(v -> showDeleteUserConfirmationDialog());
 
-        // Get a list of all users (excluding admin)
         LiveData<List<Users>> allUsersLiveData = repository.getAllUsers();
         allUsersLiveData.observe(this, users -> {
             if (users != null && users.size() > 0) {
                 List<Users> userList = new ArrayList<>();
                 for (Users user : users) {
-                    if (user.getEmployeeID() != 1) { // Exclude admin
+                    if (user.getEmployeeID() != 1) {
                         userList.add(user);
                     }
                 }
 
-                // Populate the user names in the spinners
                 ArrayAdapter<Users> adapter = new ArrayAdapter<>(this,
                         android.R.layout.simple_spinner_item, userList);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -62,7 +59,6 @@ public class AdminPage extends AppCompatActivity {
 
         Button addUserButton = findViewById(R.id.button5);
         addUserButton.setOnClickListener(v -> {
-            // Start the AddNewUser activity
             Intent intent = new Intent(AdminPage.this, AddNewUser.class);
             startActivity(intent);
         });
@@ -87,36 +83,45 @@ public class AdminPage extends AppCompatActivity {
 
         Button reportPayPeriodButton = findViewById(R.id.button8);
         reportPayPeriodButton.setOnClickListener(v -> {
-            // Log a message to confirm that the button click is being handled
-            Log.d("ButtonDebug", "Report Pay Period button clicked");
-
-            // Start the ReportPayPeriod activity
             Intent intent = new Intent(AdminPage.this, ReportPayPeriod.class);
             startActivity(intent);
         });
 
         Button resetTimeDatabaseButton = findViewById(R.id.reset_time_database);
-        resetTimeDatabaseButton.setOnClickListener(v -> resetTimeDatabase());
-
+        resetTimeDatabaseButton.setOnClickListener(v -> showResetTimeConfirmationDialog());
     }
 
-    private void deleteUser() {
+    private void showResetTimeConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Reset Time Database");
+        builder.setMessage("Are you sure you want to clear all time entries?");
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            repository.deleteAllTimeEntries();
+            Toast.makeText(this, "Time entries cleared.", Toast.LENGTH_SHORT).show();
+        });
+        builder.setNegativeButton("No", (dialog, which) -> {
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showDeleteUserConfirmationDialog() {
         Users selectedUser = (Users) deleteUserSpinner.getSelectedItem();
 
         if (selectedUser != null) {
-            repository.delete(selectedUser);
-            Toast.makeText(this, "User deleted successfully.", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Delete User");
+            builder.setMessage("Are you sure you want to delete this user?");
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                repository.delete(selectedUser);
+                Toast.makeText(this, "User deleted successfully.", Toast.LENGTH_SHORT).show();
+            });
+            builder.setNegativeButton("No", (dialog, which) -> {
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         } else {
             Toast.makeText(this, "No user selected.", Toast.LENGTH_SHORT).show();
         }
     }
-
-    private void resetTimeDatabase() {
-        // Perform database clearing or resetting logic here
-        // For example, you might want to delete all time entries
-        repository.deleteAllTimeEntries();
-
-        Toast.makeText(this, "Time database reset successfully.", Toast.LENGTH_SHORT).show();
-    }
-
 }

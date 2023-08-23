@@ -8,10 +8,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
-
 import com.myappcompany.rob.employeemanagementapplication20.Entities.TimeEntries;
-import com.myappcompany.rob.employeemanagementapplication20.Entities.Users;
-
 import java.util.List;
 
 @Dao
@@ -26,9 +23,6 @@ public interface TimeDao {
     @Delete
     void delete(TimeEntries timeEntries);
 
-    @Query("SELECT * FROM TIMEENTRIES ORDER BY employeeID ASC")
-    LiveData<List<TimeEntries>> getAllTimeEntries(); // Change return type
-
     @Query("SELECT * FROM TIMEENTRIES WHERE employeeID = :id")
     LiveData<TimeEntries> getTimeEntryById(int id);
 
@@ -38,7 +32,7 @@ public interface TimeDao {
     @Query("SELECT * FROM timeentries WHERE employeeID = :employeeId ORDER BY date ASC")
     LiveData<List<TimeEntries>> getTimeEntriesForEmployee(int employeeId);
 
-    @Query("SELECT * FROM timeentries WHERE employeeID != 1") // Exclude admin
+    @Query("SELECT * FROM timeentries WHERE employeeID != 1")
     LiveData<List<TimeEntries>> getAllTimeEntriesForNonAdminEmployees();
 
     @Query("DELETE FROM TIMEENTRIES")

@@ -5,17 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.myappcompany.rob.employeemanagementapplication20.Entities.TimeEntries;
 import com.myappcompany.rob.employeemanagementapplication20.R;
-
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,7 +38,6 @@ public class SingleEmployeeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             View itemView = inflater.inflate(R.layout.total_hours_item, parent, false);
             return new TotalHoursViewHolder(itemView);
         }
-
         throw new IllegalArgumentException("Unknown viewType");
     }
 
@@ -51,23 +45,18 @@ public class SingleEmployeeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof TimeEntryViewHolder) {
             TimeEntries timeEntry = timeEntriesList.get(position);
-
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             String formattedDate = dateFormat.format(timeEntry.getDate());
-
             TimeEntryViewHolder entryViewHolder = (TimeEntryViewHolder) holder;
             entryViewHolder.dateTextView.setText(formattedDate);
             entryViewHolder.totalHoursTextView.setText(String.format(Locale.getDefault(), "%.4f", timeEntry.getTotalHours()));
         } else if (holder instanceof TotalHoursViewHolder) {
-            // Calculate the total hours for the current pay period
             double totalPayPeriodHours = calculateTotalPayPeriodHours();
-
             TotalHoursViewHolder totalHoursViewHolder = (TotalHoursViewHolder) holder;
-            totalHoursViewHolder.totalHoursLabelTextView.setText("Total Hours"); // Set label
+            totalHoursViewHolder.totalHoursLabelTextView.setText("Total Hours");
             totalHoursViewHolder.totalHoursValueTextView.setText(String.format(Locale.getDefault(), "%.4f", totalPayPeriodHours));
         }
     }
-
 
     @Override
     public int getItemViewType(int position) {
@@ -80,7 +69,7 @@ public class SingleEmployeeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemCount() {
-        return timeEntriesList.size() + 1; // +1 for the total hours row
+        return timeEntriesList.size() + 1;
     }
 
     public void setTimeEntriesList(List<TimeEntries> timeEntriesList) {
@@ -89,15 +78,12 @@ public class SingleEmployeeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private double calculateTotalPayPeriodHours() {
-        // Calculate total hours for the current pay period
         double totalPayPeriodHours = 0.0;
         for (TimeEntries timeEntry : timeEntriesList) {
             totalPayPeriodHours += timeEntry.getTotalHours();
         }
         return totalPayPeriodHours;
     }
-
-    // ViewHolder classes...
 
     private static class TimeEntryViewHolder extends RecyclerView.ViewHolder {
         private TextView dateTextView;
@@ -120,5 +106,4 @@ public class SingleEmployeeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             totalHoursValueTextView = itemView.findViewById(R.id.totalHoursValueTextView);
         }
     }
-
 }

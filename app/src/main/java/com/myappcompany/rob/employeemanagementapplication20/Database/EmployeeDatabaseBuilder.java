@@ -20,7 +20,6 @@ public abstract class EmployeeDatabaseBuilder extends RoomDatabase {
 
     public abstract TimeDao timeDao();
     public abstract UserDao userDao();
-
     public static volatile EmployeeDatabaseBuilder INSTANCE;
 
     static EmployeeDatabaseBuilder getDatabase(final Context context){
@@ -35,7 +34,4 @@ public abstract class EmployeeDatabaseBuilder extends RoomDatabase {
         }
         return INSTANCE;
     }
-
-
-
 }

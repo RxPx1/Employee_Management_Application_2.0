@@ -11,7 +11,7 @@ public class Users {
     private int employeeID;
 
     private String username;
-    private String passCode; // Change the data type to String
+    private String passCode;
 
     public Users() {
     }

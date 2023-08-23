@@ -2,7 +2,6 @@ package com.myappcompany.rob.employeemanagementapplication20.Dao;
 
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -37,9 +36,5 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE username = :username")
     List<Users> getUsersByUsername(String username);
-
-    @Query("SELECT * FROM users WHERE username = :username LIMIT 1")
-    LiveData<Users> getUserByUsername(String username);
-
 
 }

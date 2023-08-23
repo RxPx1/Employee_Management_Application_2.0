@@ -38,11 +38,6 @@
             android:label="Update Admin"
             android:parentActivityName=".UI.AdminPage" />
         <activity
-            android:name=".UI.AllEmployeeHours"
-            android:exported="false"
-            android:label="All Employee Hours"
-            android:parentActivityName=".UI.AdminPage" />
-        <activity
             android:name=".UI.AdminPage"
             android:exported="false"
             android:label="Admin Page"

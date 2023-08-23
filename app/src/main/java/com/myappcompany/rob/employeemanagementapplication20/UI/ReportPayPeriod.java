@@ -2,23 +2,17 @@ package com.myappcompany.rob.employeemanagementapplication20.UI;
 
 import android.os.Bundle;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-
 import com.myappcompany.rob.employeemanagementapplication20.Database.Repository;
 import com.myappcompany.rob.employeemanagementapplication20.Entities.TimeEntries;
 import com.myappcompany.rob.employeemanagementapplication20.Entities.Users;
 import com.myappcompany.rob.employeemanagementapplication20.R;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+
 
 public class ReportPayPeriod extends AppCompatActivity {
 
@@ -42,50 +36,35 @@ public class ReportPayPeriod extends AppCompatActivity {
             if (users != null && users.size() > 0) {
                 StringBuilder reportBuilder = new StringBuilder();
 
-                LiveData<List<TimeEntries>> timeEntriesLiveData = repository.getAllTimeEntriesForNonAdminEmployees();
-                timeEntriesLiveData.observe(this, timeEntriesList -> {
-                    if (timeEntriesList != null && timeEntriesList.size() > 0) {
-                        Map<Integer, Map<Date, Double>> userTimeEntriesMap = new HashMap<>();
+                for (Users user : users) {
+                    if (user.getEmployeeID() != 1) {
+                        int employeeID = user.getEmployeeID();
+                        LiveData<List<TimeEntries>> timeEntriesLiveData = repository.getTimeEntriesForEmployee(employeeID);
+                        timeEntriesLiveData.observe(this, timeEntriesList -> {
+                            if (timeEntriesList != null && timeEntriesList.size() > 0) {
+                                double totalHours = 0.0;
 
-                        for (TimeEntries entry : timeEntriesList) {
-                            int employeeID = entry.getEmployeeID();
-                            Map<Date, Double> dateTotalHoursMap = userTimeEntriesMap.getOrDefault(employeeID, new HashMap<>());
+                                reportBuilder.append("EmployeeID ").append(employeeID)
+                                        .append(" - ").append(user.getUsername()).append("\n");
 
-                            Date entryDate = entry.getDate();
-                            double totalHours = dateTotalHoursMap.getOrDefault(entryDate, 0.0);
-                            totalHours += entry.getTotalHours();
-                            dateTotalHoursMap.put(entryDate, totalHours);
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                                DecimalFormat decimalFormat = new DecimalFormat("0.000");
 
-                            userTimeEntriesMap.put(employeeID, dateTotalHoursMap);
-                        }
+                                for (TimeEntries entry : timeEntriesList) {
+                                    String formattedDate = dateFormat.format(entry.getDate());
+                                    String formattedTotalHours = decimalFormat.format(entry.getTotalHours());
+                                    reportBuilder.append(formattedDate)
+                                            .append("            ").append(formattedTotalHours).append(" hours\n");
 
-                        for (Map.Entry<Integer, Map<Date, Double>> userEntry : userTimeEntriesMap.entrySet()) {
-                            int employeeID = userEntry.getKey();
-                            LiveData<Users> userLiveData = repository.getUserById(employeeID);
-                            userLiveData.observe(this, user -> {
-                                if (user != null) {
-                                    Map<Date, Double> dateTotalHoursMap = userEntry.getValue();
-
-                                    reportBuilder.append("EmployeeID ").append(employeeID)
-                                            .append(" - ").append(user.getUsername()).append("\n");
-
-                                    for (Map.Entry<Date, Double> entry : dateTotalHoursMap.entrySet()) {
-                                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                                        String formattedDate = dateFormat.format(entry.getKey());
-                                        DecimalFormat decimalFormat = new DecimalFormat("0.000");
-                                        String formattedTotalHours = decimalFormat.format(entry.getValue());
-
-                                        reportBuilder.append(formattedDate)
-                                                .append("            ").append(formattedTotalHours).append(" hours\n");
-                                    }
-
-                                    // Update the report text after processing
-                                    reportText.setText(reportBuilder.toString());
+                                    totalHours += entry.getTotalHours();
                                 }
-                            });
-                        }
+
+                                reportBuilder.append("Total Hours: ").append(decimalFormat.format(totalHours)).append(" hours\n\n");
+                                reportText.setText(reportBuilder.toString());
+                            }
+                        });
                     }
-                });
+                }
             }
         });
     }

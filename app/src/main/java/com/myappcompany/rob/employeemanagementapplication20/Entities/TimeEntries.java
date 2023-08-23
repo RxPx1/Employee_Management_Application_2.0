@@ -19,7 +19,6 @@ public class TimeEntries {
     private Long clockOutTime;
     private Double totalHours;
 
-    // Add a Date field to store the date
     @TypeConverters(DateConverter.class)
     private Date date;
 

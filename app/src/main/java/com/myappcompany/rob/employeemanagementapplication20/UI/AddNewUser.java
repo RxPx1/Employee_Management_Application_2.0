@@ -41,25 +41,18 @@ public class AddNewUser extends AppCompatActivity {
             return;
         }
 
-        // Check if the passcode is exactly 6 digits
         if (newPasscode.length() != 6) {
             Toast.makeText(this, "Passcode must be exactly 6 digits.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Encrypt the passcode if needed
         String encryptedPasscode = CryptoUtils.encryptToBase64(newPasscode);
 
         Users newUser = new Users();
         newUser.setUsername(newUsername);
         newUser.setPassCode(encryptedPasscode);
-
         repository.insert(newUser);
-
-        // Show a success message or perform any other necessary actions
         Toast.makeText(this, "New user added successfully.", Toast.LENGTH_SHORT).show();
-
-        // Finish the activity to go back to the AdminPage
         finish();
     }
 

@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,7 +18,6 @@ import com.myappcompany.rob.employeemanagementapplication20.Database.Repository;
 import com.myappcompany.rob.employeemanagementapplication20.Entities.Users;
 import com.myappcompany.rob.employeemanagementapplication20.R;
 
-import java.util.concurrent.Executors;
 
 public class LoginPage extends AppCompatActivity {
 
@@ -33,11 +31,9 @@ public class LoginPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
 
-        repository = new Repository(getApplication()); // Initialize the repository
-        repository.initializeDatabase(); // Trigger the database initialization
-
-        repository = new Repository(getApplication()); // Initialize the repository
-
+        repository = new Repository(getApplication());
+        repository.initializeDatabase();
+        repository = new Repository(getApplication());
         viewModel = new ViewModelProvider(this, new ViewModelFactory(getApplication())).get(LoginViewModel.class);
 
         usernameEditText = findViewById(R.id.username_edit_text);
@@ -57,10 +53,6 @@ public class LoginPage extends AppCompatActivity {
                 viewModel.getUserByUsernameAndPassword(username, encryptedPasscode).observe(this, new Observer<Users>() {
                     @Override
                     public void onChanged(Users user) {
-                        // Log employeeID when user logs in
-                        if (user != null) {
-                            Log.d("LoginPage", "Logged in user's employeeID: " + user.getEmployeeID());
-                        }
                         handleUserResult(user);
                     }
                 });
@@ -72,11 +64,8 @@ public class LoginPage extends AppCompatActivity {
         }
     }
 
-
-
     private class ViewModelFactory implements ViewModelProvider.Factory {
         private Application application;
-
         public ViewModelFactory(Application application) {
             this.application = application;
         }
@@ -89,11 +78,9 @@ public class LoginPage extends AppCompatActivity {
 
     public class LoginViewModel extends ViewModel {
         private Repository repository;
-
         public LoginViewModel(Application application) {
             repository = new Repository(application);
         }
-
         public LiveData<Users> getUserByUsernameAndPassword(String username, String encryptedPasscode) {
             return repository.getUserByUsernameAndPassword(username, encryptedPasscode);
         }
@@ -106,15 +93,14 @@ public class LoginPage extends AppCompatActivity {
                 intent = new Intent(LoginPage.this, AdminPage.class);
             } else if (user.getEmployeeID() >= 2) {
                 intent = new Intent(LoginPage.this, UserPage.class);
-                intent.putExtra("employeeID", user.getEmployeeID()); // Pass employeeID
+                intent.putExtra("employeeID", user.getEmployeeID());
             } else {
                 Toast.makeText(LoginPage.this, "Invalid username or passcode.", Toast.LENGTH_SHORT).show();
-                return; // Don't proceed to starting an activity
+                return;
             }
             startActivity(intent);
         } else {
             Toast.makeText(LoginPage.this, "Invalid username or passcode.", Toast.LENGTH_SHORT).show();
         }
     }
-
 }

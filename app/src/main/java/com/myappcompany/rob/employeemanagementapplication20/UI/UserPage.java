@@ -3,18 +3,14 @@ package com.myappcompany.rob.employeemanagementapplication20.UI;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.myappcompany.rob.employeemanagementapplication20.Database.Repository;
 import com.myappcompany.rob.employeemanagementapplication20.Entities.TimeEntries;
 import com.myappcompany.rob.employeemanagementapplication20.R;
-
 import java.text.DecimalFormat;
 import java.util.Date;
 
@@ -30,12 +26,10 @@ public class UserPage extends AppCompatActivity {
 
         repository = new Repository(getApplication());
 
-        // Retrieve the employeeID from intent's extras
         Intent intent = getIntent();
         if (intent.hasExtra("employeeID")) {
-            currentUserID = intent.getIntExtra("employeeID", 0); // 0 is a default value if key not found
+            currentUserID = intent.getIntExtra("employeeID", 0);
         } else {
-            // Handle case where employeeID was not passed
             Toast.makeText(this, "Error: employeeID not provided.", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -72,10 +66,8 @@ public class UserPage extends AppCompatActivity {
         TimeEntries timeEntry = new TimeEntries();
         timeEntry.setClockInTime(currentTime);
         timeEntry.setDate(new Date(currentTime));
-        timeEntry.setEmployeeID(currentUserID); // Set the employee ID
-
+        timeEntry.setEmployeeID(currentUserID);
         repository.insert(timeEntry);
-
         Toast.makeText(this, "Clocked in successfully.", Toast.LENGTH_SHORT).show();
     }
 
@@ -90,14 +82,11 @@ public class UserPage extends AppCompatActivity {
 
                 if (timeEntry != null && timeEntry.getClockOutTime() == null) {
                     timeEntry.setClockOutTime(currentTime);
-
-                    // Calculate total hours and set it to the TimeEntries object
                     double totalHours = Double.parseDouble(calculateTotalHours(timeEntry.getClockInTime(), currentTime));
                     timeEntry.setTotalHours(totalHours);
-                    timeEntry.setDate(new Date(currentTime)); // Set the date for clock-out
+                    timeEntry.setDate(new Date(currentTime));
                     repository.update(timeEntry);
 
-                    // Format the total hours for display
                     DecimalFormat decimalFormat = new DecimalFormat("0.000");
                     String formattedTotalHours = decimalFormat.format(totalHours);
 
@@ -110,18 +99,15 @@ public class UserPage extends AppCompatActivity {
     }
 
     private String calculateTotalHours(long clockInTime, long clockOutTime) {
-        // Calculate the total hours based on the clock-in and clock-out times
         long elapsedTimeInMillis = clockOutTime - clockInTime;
         double hours = (double) elapsedTimeInMillis / (1000 * 60 * 60);
-
-        // Format the hours to 0.000 format
         DecimalFormat decimalFormat = new DecimalFormat("0.000");
         return decimalFormat.format(hours);
     }
 
     private void viewHours() {
         Intent intent = new Intent(UserPage.this, SingleEmployeeHours.class);
-        intent.putExtra("employeeID", currentUserID); // Pass the employeeID of the currently logged in user
+        intent.putExtra("employeeID", currentUserID);
         startActivity(intent);
     }
 }

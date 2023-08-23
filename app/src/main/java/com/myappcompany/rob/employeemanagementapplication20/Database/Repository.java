@@ -33,10 +33,6 @@ public class Repository {
         return mUserDao.getUsersById(id);
     }
 
-    public LiveData<TimeEntries> getTimeEntryById(int id) {
-        return mTimeDao.getTimeEntryById(id);
-    }
-
     public LiveData<List<Users>> getAllUsers() {
         return mAllUsers;
     }
@@ -57,10 +53,6 @@ public class Repository {
         databaseExecutor.execute(() -> {
             mUserDao.delete(users);
         });
-    }
-
-    public LiveData<List<TimeEntries>> getAllTimeEntries() {
-        return mAllTimeEntries;
     }
 
     public void insert(TimeEntries timeEntries) {
@@ -85,10 +77,6 @@ public class Repository {
         return mUserDao.getUserByUsernameAndPassword(username, encryptedPasscode);
     }
 
-    public LiveData<Users> getUserById(int id) {
-        return mUserDao.getUsersById(id);
-    }
-
     public void updateAdminUser(Users adminUser) {
         databaseExecutor.execute(() -> {
             mUserDao.update(adminUser);
@@ -103,9 +91,6 @@ public class Repository {
         return mTimeDao.getTimeEntriesForEmployee(employeeId);
     }
 
-    public LiveData<List<TimeEntries>> getAllTimeEntriesForNonAdminEmployees() {
-        return mTimeDao.getAllTimeEntriesForNonAdminEmployees();
-    }
     public void deleteAllTimeEntries() {
         databaseExecutor.execute(() -> {
             mTimeDao.deleteAllTimeEntries();
@@ -121,10 +106,9 @@ public class Repository {
                     Users adminUser = new Users();
                     adminUser.setUsername("admin");
                     adminUser.setPassCode(defaultEncryptedPasscode);
-                    adminUser.setEmployeeID(1); // Set the employee ID to 1
-                    insert(adminUser); // Insert the default admin account
+                    adminUser.setEmployeeID(1);
+                    insert(adminUser);
                 } else {
-                    // Update the existing admin account to ensure it has the correct employee ID
                     Users existingAdmin = adminUsers.get(0);
                     existingAdmin.setEmployeeID(1);
                     update(existingAdmin);
@@ -132,6 +116,5 @@ public class Repository {
             }
         });
     }
-
 }
 

@@ -52,18 +52,17 @@ public class ChangeAdminLogin extends AppCompatActivity {
             return;
         }
 
-        // Encrypt the new passcode
         String encryptedPasscode = CryptoUtils.encryptToBase64(newPasscode);
 
         LiveData<Users> adminLiveData = repository.getUsersById(1);
         adminLiveData.observe(this, adminUser -> {
-            adminLiveData.removeObservers(this); // Remove the observer after getting the admin user
+            adminLiveData.removeObservers(this);
             if (adminUser != null) {
                 adminUser.setUsername(newUsername);
                 adminUser.setPassCode(encryptedPasscode);
                 repository.update(adminUser);
                 Toast.makeText(this, "Admin login updated successfully.", Toast.LENGTH_SHORT).show();
-                finish(); // Close the activity after saving
+                finish();
             } else {
                 Toast.makeText(this, "Admin user not found.", Toast.LENGTH_SHORT).show();
             }
